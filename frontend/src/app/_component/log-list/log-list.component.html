@@ -1,7 +1,4 @@
-<p class="top-bar">/path/path/path/</p>
-<ul class="shell-body">
-  <li>cd&nbsp;/Users/pjla222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222ngley/Documents/websites/codechewing.com/git/css-shell/demo/</li>
-  <li>cd ../../../../</li>
-  <li>pwd</li>
-  <li>/Users/pjlangley/Documents/websites/</li>
+<div class="log-title" [title]="file">{{file}}</div>
+<ul class="log-content" (scroll)="scrollList($event)" (resize)="resizeList($event)" #logList>
+  <li *ngFor="let row of content;">{{row}}</li>
 </ul>

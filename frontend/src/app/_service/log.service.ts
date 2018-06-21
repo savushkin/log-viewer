@@ -21,4 +21,13 @@ export class LogService {
       params
     });
   }
+
+  public getFileContent(fileName: string, page: number, size: number): Observable<string[]> {
+    let params: HttpParams = new HttpParams().append('page', page + '')
+      .append('size', size + '');
+
+    return this.http.get<string[]>(`/${environment.context}/${environment.api.log}/${environment.api.files}/${fileName}`, {
+      params
+    });
+  }
 }

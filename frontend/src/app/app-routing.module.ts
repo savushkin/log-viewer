@@ -6,7 +6,9 @@ const routes: Routes = [
   {
     path: 'log',
     component: PageLogComponent
-  }
+  },
+  { path: '', redirectTo: '/log', pathMatch: 'full' },
+  { path: '**', redirectTo: '/log' }
 ];
 
 @NgModule({

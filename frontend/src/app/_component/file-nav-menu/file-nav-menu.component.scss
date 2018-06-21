@@ -3,12 +3,29 @@
   width: 300px;
   height: 100%;
   border-right: 1px solid #ced4da;
+
+  padding-top: 41px;
+  position: relative;
   .form-control {
+    position: absolute;
+    top: 0;
+    left: 0;
+
     padding: 0.5rem 1rem;
     border: none;
     border-bottom: 1px solid #ced4da;
     outline: none;
     box-shadow: none;
     border-radius: 0;
+  }
+
+  nav {
+    display: block;
+    height: 100%;
+    overflow: auto;
+
+    a {
+      border-radius: 0;
+    }
   }
 }

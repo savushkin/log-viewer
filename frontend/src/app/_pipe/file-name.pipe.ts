@@ -6,14 +6,17 @@ import {Pipe, PipeTransform} from '@angular/core';
 export class FileNamePipe implements PipeTransform {
 
   transform(path: string, args?: any): any {
-    let files = path.split('/');
+    if (path) {
+      let files = path.split('/');
 
-    if (files.length > 0) {
-      return files[files.length - 1];
+      if (files.length && files.length > 0) {
+        return files[files.length - 1];
+      } else {
+        return '';
+      }
     } else {
-      return '';
+      return 'Выберите файл';
     }
-
   }
 
 }

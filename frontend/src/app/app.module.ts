@@ -19,9 +19,9 @@ import {FileNamePipe} from './_pipe/file-name.pipe';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
 
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

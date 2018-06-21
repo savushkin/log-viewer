@@ -1,5 +1,41 @@
 :host {
   display: block;
 
-  //font: 0.8em 'Andale Mono', Consolas, 'Courier New';
+  position: relative;
+  font-family: 'Andale Mono', Consolas, 'Courier New', serif;
+
+  box-sizing: border-box;
+  padding-top: 41px;
+  height: 100%;
+
+  .log-title {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    padding: 0.5rem 1rem;
+    width: 100%;
+    border-bottom: 1px solid #ced4da;
+
+  }
+
+  .log-content {
+    display: block;
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+    list-style: none;
+    padding: 0.5rem 1rem;
+
+    font-size: 13px;
+
+    background-color: #2B2B2B;
+    color: #BED6FF;
+
+    li {
+      width: auto;
+      white-space: nowrap;
+    }
+  }
+
 }

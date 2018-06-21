@@ -1,10 +1,10 @@
 <input type="text" placeholder="Name Filter" class="form-control" (change)="searchFileNames($event)">
-<nav class="nav flex-column">
-    <a class="nav-link"
+<nav class="nav nav-pills nav-justified flex-column">
+    <a class="nav-item nav-link"
        *ngFor="let fileName of fileNames;"
-       routerLink="/logs"
+       [routerLink]="['/log']"
        routerLinkActive="active"
-       [queryParams]="{ file: fileName }"
+       [queryParams]="{ file: fileName | fileName}"
        [title]="fileName">
       {{fileName | fileName}}
     </a>

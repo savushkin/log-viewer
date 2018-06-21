@@ -3,29 +3,66 @@ body, html {
 }
 
 #wrapper {
-  display: flex;
+  display: block;
   width: 100%;
   height: 100%;
 
+  overflow: hidden;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 
-  #menu {
-    //flex-shrink: 0;
+  position: relative;
 
-    //margin: 0;
-    //padding: 0;
-    //
-    //width: 300px;
+  #menu-toggle {
+    transition: left 0.2s linear;
+
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+
+    display: block;
+    padding: 0.3em;
+    border-radius: 1em;
+
+    cursor: pointer;
+    user-select: none;
+    background-color: #D25252;
+  }
+
+  #menu {
+    transition: width 0.2s linear;
+
+    position: absolute;
+    top: 0;
+
+    overflow: hidden;
+    width: 0;
     height: 100%;
   }
 
   #page {
+    transition: padding-left 0.2s linear;
+
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 
-    //width: 100%;
-    //height: 100%;
+    width: 100%;
+    height: 100%;
+  }
+
+  &.menu-active {
+    #menu {
+      width: 300px;
+    }
+
+    #page {
+      padding-left: 300px;
+    }
+
+    #menu-toggle {
+      left: 310px;
+    }
   }
 }
