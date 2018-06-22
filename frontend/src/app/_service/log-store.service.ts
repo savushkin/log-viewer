@@ -7,23 +7,41 @@ import {ErrorService} from './error.service';
   providedIn: 'root'
 })
 export class LogStoreService {
-  public fileNamesStore: Subject<string[]> = new Subject<string[]>();
+  public filesStore: Subject<any[]> = new Subject<any[]>();
   public logContentStore: Subject<any> = new Subject<any>();
+
+  private subscriptions = {
+    requestFileNames: null,
+    requestFileContent: null,
+  };
 
   constructor(private logService: LogService,
               private errorService: ErrorService) { }
 
   public loadFileNames(fileNameFilter?: string): void {
-    this.logService.getFiles(fileNameFilter).subscribe(
-      fileNames => this.fileNamesStore.next(fileNames),
+    if (this.subscriptions['requestFilesStore']) {
+      this.subscriptions['requestFilesStore'].unsubscribe();
+    }
+
+    this.subscriptions['requestFilesStore'] = this.logService.getFiles(fileNameFilter).subscribe(
+      files => this.filesStore.next(files),
       error => this.errorService.handle(error)
     )
   }
 
-  public loadFileContent(fileName: string, page: number, size: number): void {
-    this.logService.getFileContent(fileName, page, size).subscribe(
+  public loadFileContent(fileName: string, from: number, to: number): void {
+    this.logContentStore.next(['Loading...']);
+
+    if (this.subscriptions['requestFileContent']) {
+      this.subscriptions['requestFileContent'].unsubscribe();
+    }
+
+    this.subscriptions['requestFileContent'] = this.logService.getFileContent(fileName, from, to).subscribe(
       content => this.logContentStore.next(content),
-      error => this.errorService.handle(error)
+      error => {
+        this.logContentStore.next(['Error:', error.message, error.error]);
+        this.errorService.handle(error);
+      }
     )
   }
 }

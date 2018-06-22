@@ -8,6 +8,7 @@ import {FileNavMenuComponent} from './_component/file-nav-menu/file-nav-menu.com
 import {PageLogComponent} from './_component/page/page-log/page-log.component';
 import {LogListComponent} from './_component/log-list/log-list.component';
 import {FileNamePipe} from './_pipe/file-name.pipe';
+import {FileSizePipe} from './_pipe/file-size.pipe';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import {FileNamePipe} from './_pipe/file-name.pipe';
     FileNavMenuComponent,
     PageLogComponent,
     LogListComponent,
-    FileNamePipe
+    FileNamePipe,
+    FileSizePipe
   ],
   imports: [
     BrowserModule,

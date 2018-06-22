@@ -7,13 +7,13 @@ import {LogStoreService} from '../../_service/log-store.service';
   styleUrls: ['./file-nav-menu.component.scss']
 })
 export class FileNavMenuComponent implements OnInit {
-  public fileNames: string[] = [];
+  public files = [];
 
 
   constructor(private logStoreService: LogStoreService) { }
 
   ngOnInit() {
-    this.logStoreService.fileNamesStore.subscribe(fileNames => this.fileNames = fileNames);
+    this.logStoreService.filesStore.subscribe(fileNames => this.files = fileNames);
     this.logStoreService.loadFileNames();
   }
 

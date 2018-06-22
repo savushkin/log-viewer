@@ -1,5 +1,6 @@
 package me.savushkin.almTest.backend.controller;
 
+import me.savushkin.almTest.backend.model.LogFile;
 import me.savushkin.almTest.backend.service.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.File;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -31,7 +31,7 @@ public class LogController {
     @RequestMapping(value = "/files", method = GET)
     public ResponseEntity<?> getFiles(@RequestParam(name = "fileNameFilter", required = false) String fileNameFilter) {
         try {
-            List<File> files;
+            List<LogFile> files;
             if (fileNameFilter != null) {
                 files = logService.getAllFiles(fileNameFilter);
             } else {
@@ -47,10 +47,10 @@ public class LogController {
 
   @RequestMapping(value = "/files/{fileName:.+}", method = GET)
   public ResponseEntity<?> getFileContent(@PathVariable(name = "fileName") String fileName,
-                                          @RequestParam(name = "page") Long page,
-                                          @RequestParam(name = "size") Long size) {
+                                          @RequestParam(name = "from") Integer from,
+                                          @RequestParam(name = "to") Integer to) {
       try {
-        List<String> rows = logService.getFileContent(fileName, page, size);
+        List<String> rows = logService.getFileContent(fileName, from, to);
         return new ResponseEntity<>(rows, HttpStatus.OK);
       } catch (Exception e) {
         logger.error(e.getMessage(), e);

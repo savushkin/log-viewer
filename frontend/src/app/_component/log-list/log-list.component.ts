@@ -8,12 +8,20 @@ import {LogStoreService} from '../../_service/log-store.service';
   styleUrls: ['./log-list.component.scss']
 })
 export class LogListComponent implements OnInit {
-  public file: string = null;
+  public file = null;
   public content: string[] = [];
+
+  public from: number = 0;
+  public to: number = 25;
+  public top: number = 0;
+  public left: number = 25;
+  public onePageSize: number = 2;
+  public onePageHeight: number = 2;
 
   @ViewChild('logList')
   private logList: ElementRef;
 
+  private timeout;
 
 
   constructor(private route: ActivatedRoute,
@@ -23,34 +31,67 @@ export class LogListComponent implements OnInit {
 
 
   ngOnInit() {
+    this.onePageSize = Math.floor((this.logList.nativeElement.offsetHeight - 16) / 19) * 1.5;
+    this.onePageSize = 250;
+    this.onePageHeight = this.logList.nativeElement.offsetHeight - 16;
+    this.to = this.onePageSize;
+
+    if (this.route.snapshot.queryParams['top']) {
+      // this.logList.nativeElement.scrollTop = this.route.snapshot.queryParams['top'];
+    }
+    if (this.route.snapshot.queryParams['left']) {
+      // this.logList.nativeElement.scrollLeft = this.route.snapshot.queryParams['left'];
+    }
+
     this.logStoreService.logContentStore.subscribe(content => this.content = content);
 
     this.route.queryParams.subscribe(
       queryParams => {
-        if (queryParams['file']) {
-          if (this.file !== queryParams['file']) {
-            this.logList.nativeElement.scrollTop = 0;
-            this.logList.nativeElement.scrollLeft = 0;
-          }
 
-          this.file = queryParams['file'];
-          this.logStoreService.loadFileContent(this.file, 0, 250);
+        this.from = parseInt(queryParams['from'] || 0);
+        this.to = parseInt(queryParams['to'] || this.onePageSize);
+        this.top = parseInt(queryParams['top'] || 0);
+        this.left = parseInt(queryParams['left'] || 0);
+
+        if (queryParams['file']) {
+          let file = JSON.parse(queryParams['file']);
+
+          if (this.file && this.file.name === file.name) {
+            // this.logStoreService.loadFileContent(this.file.name, this.from, this.to);
+          } else {
+            this.file = file;
+            this.logStoreService.loadFileContent(this.file.name, this.from, this.to);
+          }
+        } else {
+          this.file = { name: 'Select file' };
         }
       }
     )
-
-    // this.logList.nativeElement.
   }
 
   public scrollList(event) {
-    this.router.navigate(['.'], {
-      relativeTo: this.route,
-      queryParams: {
-        top: event.target.offsetTop,
-        left: event.target.offsetLeft
-      },
-      queryParamsHandling: 'merge'
-    });
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+
+    this.timeout = setTimeout(() => {
+      // this.from += this.onePageSize;
+      // this.to += this.onePageSize;
+      if (this.top != this.logList.nativeElement.scrollTop) {
+        // this.logStoreService.loadFileContent(this.file, this.from, this.to);
+      }
+
+      this.router.navigate(['.'], {
+        relativeTo: this.route,
+        queryParams: {
+          top: this.logList.nativeElement.scrollTop,
+          left: this.logList.nativeElement.scrollLeft,
+          from: this.from,
+          to: this.to
+        },
+        queryParamsHandling: 'merge'
+      });
+    }, 1000);
   }
 
   public resizeList(event) {
