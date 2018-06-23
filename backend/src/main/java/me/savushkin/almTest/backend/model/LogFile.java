@@ -11,4 +11,5 @@ public class LogFile {
   private String name;
   private Long size;
   private Integer rows;
+  private Long maxColumns;
 }

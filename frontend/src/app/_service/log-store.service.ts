@@ -29,15 +29,20 @@ export class LogStoreService {
     )
   }
 
-  public loadFileContent(fileName: string, from: number, to: number): void {
-    this.logContentStore.next(['Loading...']);
+  public loadFileContent(fileName: string, from: number, to: number, lineStart: number, lineEnd: number, callback?): void {
+    this.logContentStore.next([{row: 'Loading...', index: 0}]);
 
     if (this.subscriptions['requestFileContent']) {
       this.subscriptions['requestFileContent'].unsubscribe();
     }
 
-    this.subscriptions['requestFileContent'] = this.logService.getFileContent(fileName, from, to).subscribe(
-      content => this.logContentStore.next(content),
+    this.subscriptions['requestFileContent'] = this.logService.getFileContent(fileName, from, to, lineStart, lineEnd).subscribe(
+      content => {
+        this.logContentStore.next(content);
+        if (callback) {
+          callback();
+        }
+      },
       error => {
         this.logContentStore.next(['Error:', error.message, error.error]);
         this.errorService.handle(error);

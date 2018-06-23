@@ -1,8 +1,12 @@
-<div class="log-title" [title]="file?.name">
-  {{file?.name}}<ng-container *ngIf="file?.name && file?.size">, {{file?.rows? file?.rows + ' rows': 'indexing'}}, {{file?.size|fileSize}}</ng-container>
+<div class="log-title" [title]="name">
+  <ng-container *ngIf="name; else selectFile">{{name}}, {{rows? rows + ' rows': 'indexing'}}, {{size|fileSize}}</ng-container>
+  <ng-template #selectFile>Select file</ng-template>
 </div>
-<div class="log-content-container" #logListContainer>
-  <svg class="log-content" [attr.height]="16 + 19 * file?.rows" (scroll)="scrollList($event)" (resize)="resizeList($event)" #logList>
+<div class="log-content-container" #logListContainer (scroll)="scrollList($event)">
+  <svg class="log-content"
+       [attr.width]="16 + symbolWidth * (maxColumns? maxColumns: 0) + 16"
+       [attr.height]="8 + lineHeight * (rows? rows: 0) + 32"
+       #logList>
     <style>
       .log-content-item {
         font-family: 'Andale Mono', Consolas, 'Courier New', serif;
@@ -10,11 +14,9 @@
         fill: #BED6FF;
       }
     </style>
-    <text class="log-content-item"
-          *ngFor="let row of content;"
-          [attr.y]="row?.index? 16 + row?.index * 19: 16">{{row?.row}}</text>
+    <text [attr.y]="row?.index? 16 + row?.index * lineHeight: 16"
+          [attr.x]="lineStart? lineStart * symbolWidth: 0"
+          class="log-content-item"
+          *ngFor="let row of content;">{{row?.row}}</text>
   </svg>
 </div>
-<!--<ul class="log-content" (scroll)="scrollList($event)" (resize)="resizeList($event)" #logList>
-  <li *ngFor="let row of content;">{{row}}</li>
-</ul>-->

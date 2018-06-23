@@ -17,15 +17,21 @@
     width: 100%;
     border-bottom: 1px solid #ced4da;
 
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
   }
 
 
   .log-content-container {
-
     display: block;
     overflow: auto;
     height: 100%;
     width: 100%;
+
+    background-color: #2B2B2B;
+
     .log-content {
       min-height: 100%;
       min-width: 100%;

@@ -49,9 +49,11 @@ public class LogController {
   @RequestMapping(value = "/files/{fileName:.+}", method = GET)
   public ResponseEntity<?> getFileContent(@PathVariable(name = "fileName") String fileName,
                                           @RequestParam(name = "from") Integer from,
-                                          @RequestParam(name = "to") Integer to) {
+                                          @RequestParam(name = "to") Integer to,
+                                          @RequestParam(name = "lineStart") Integer lineStart,
+                                          @RequestParam(name = "lineEnd") Integer lineEnd) {
       try {
-        List<LogRow> rows = logService.getFileContent(fileName, from, to);
+        List<LogRow> rows = logService.getFileContent(fileName, from, to, lineStart, lineEnd);
         return new ResponseEntity<>(rows, HttpStatus.OK);
       } catch (Exception e) {
         logger.error(e.getMessage(), e);

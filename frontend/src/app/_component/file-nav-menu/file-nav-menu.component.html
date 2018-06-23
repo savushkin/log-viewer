@@ -4,8 +4,9 @@
        *ngFor="let file of files;"
        [routerLink]="['/log']"
        routerLinkActive="active"
-       [queryParams]="{ file: file|json }"
+       [queryParams]="{ name: file?.name, rows: file?.rows, maxColumns: file?.maxColumns, size: file?.size  }"
+       [queryParamsHandling]="''"
        [title]="file?.name">
-      {{file?.name}}, {{file?.rows? file?.rows + ' rows': 'indexing'}}, {{file?.size|fileSize}}
+      {{file?.name}}{{file?.rows? '' : ', indexing'}}
     </a>
 </nav>

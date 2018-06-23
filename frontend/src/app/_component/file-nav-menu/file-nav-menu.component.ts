@@ -9,7 +9,6 @@ import {LogStoreService} from '../../_service/log-store.service';
 export class FileNavMenuComponent implements OnInit {
   public files = [];
 
-
   constructor(private logStoreService: LogStoreService) { }
 
   ngOnInit() {

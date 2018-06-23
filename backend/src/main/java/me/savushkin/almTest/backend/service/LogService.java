@@ -54,9 +54,11 @@ public class LogService {
     files.sort((file1, file2) -> Long.compare(file2.lastModified(), file1.lastModified()));
     List<LogFile> logFiles = new ArrayList<>();
     files.forEach(file -> {
-      LogFile logFile = new LogFile(file.getName(), file.length(), null);
+      LogFile logFile = new LogFile(file.getName(), file.length(), null, null);
       if (logFilesIndex.getLinesIndex().get(logFile.getName()) != null)
         logFile.setRows(logFilesIndex.getLinesIndex().get(logFile.getName()).size());
+      if (logFilesIndex.getMaxColumn().get(logFile.getName()) != null)
+        logFile.setMaxColumns(logFilesIndex.getMaxColumn().get(logFile.getName()));
       logFiles.add(logFile);
     });
     return logFiles;
@@ -66,7 +68,9 @@ public class LogService {
     return getAllFiles(null);
   }
 
-  public List<LogRow> getFileContent(String fileName, Integer from, Integer to) throws IOException {
+  public List<LogRow> getFileContent(
+    String fileName, Integer from, Integer to, Integer lineStart, Integer lineEnd) throws IOException {
+
     File file = new File(backendLogPath + "/" + fileName);
 
     if ( !file.exists() && !file.isFile() ) {
@@ -74,29 +78,39 @@ public class LogService {
     }
 
     List<LogRow> rows = new ArrayList<>(to - from);
-    byte[] buffer;
-    ByteBuffer byteBuffer;
     List<Long> lineIndexList = logFilesIndex.getLinesIndex().get(fileName);
 
-    if (lineIndexList != null) {
+    if (lineIndexList.size() != 0) {
       try (SeekableByteChannel byteChannel = Files.newByteChannel(file.toPath())) {
         for (int line = from; line < to; line++) {
-          long expectedSize = (line < lineIndexList.size() - 1 ? lineIndexList.get(line + 1) : byteChannel.size()) - lineIndexList.get(line);
-          buffer = new byte[(int) expectedSize];
-          byteBuffer = ByteBuffer.wrap(buffer);
-          byteChannel.position(lineIndexList.get(line));
-          byteChannel.read(byteBuffer);
-          BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buffer)));
-          rows.add(new LogRow(line, br.readLine()));
+          String row = getLineFromChannel(line, byteChannel, lineIndexList);
+          int rowLength = row.length();
+          if (rowLength < lineStart) {
+            row = null;
+          } else if (rowLength < lineEnd) {
+            row = row.substring(lineStart, rowLength);
+          } else {
+            row = row.substring(lineStart, lineEnd);
+          }
+          rows.add(new LogRow(line, row));
         }
       }
     } else {
       rows.add(new LogRow(0, "The file in the indexing process"));
     }
-
-    buffer = null;
-    byteBuffer = null;
     return rows;
+  }
+
+  private String getLineFromChannel(Integer line,
+                             SeekableByteChannel byteChannel,
+                             List<Long> lineIndexList) throws IOException {
+    long expectedSize = (line < lineIndexList.size() - 1 ? lineIndexList.get(line + 1) : byteChannel.size()) - lineIndexList.get(line);
+    byte buffer[] = new byte[(int) expectedSize];
+    ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
+    byteChannel.position(lineIndexList.get(line));
+    byteChannel.read(byteBuffer);
+    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buffer)));
+    return bufferedReader.readLine();
   }
 
 }

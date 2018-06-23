@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Service
 @Scope(value = "singleton")
 public class LogFilesIndex {
-  private final static int BUFFER_SIZE = 51200;
+  private final static int BUFFER_SIZE = 1024;
 
   private final Logger logger = LoggerFactory.getLogger(LogFilesIndex.class);
   private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors
@@ -28,6 +28,7 @@ public class LogFilesIndex {
   private String backendLogPath;
 
   private HashMap<String, List<Long>> linesIndex = new HashMap();
+  private HashMap<String, Long> maxColumn = new HashMap();
 
   @PostConstruct
   void init() throws FileNotFoundException {
@@ -39,6 +40,7 @@ public class LogFilesIndex {
       if ( !this.getLinesIndex().containsKey(file.getName()) ) {
 
         linesIndex.put(file.getName(), null);
+        maxColumn.put(file.getName(), null);
         executor.submit(() -> {
           try {
             linesIndex.replace(file.getName(), buildIndexForFile(file));
@@ -55,7 +57,7 @@ public class LogFilesIndex {
     byte[] buffer;
     ByteBuffer byteBuffer;
     List<Long> offsetsList = new ArrayList<>();
-
+    long length = 0, maxLength = 0;
     try (SeekableByteChannel byteChannel = Files.newByteChannel(file.toPath())) {
       buffer = new byte[BUFFER_SIZE];
       long offset = 0;
@@ -67,11 +69,15 @@ public class LogFilesIndex {
         int processedOffset = 0;
         while (reader.ready()) {
           Character character = (char) reader.read();
-          int length = character.toString().getBytes().length;
-          offset += length;
-          processedOffset += length;
+          offset++;
+          length++;
+          processedOffset++;
           if (character == '\n') {
             offsetsList.add(offset);
+            if (maxLength < length) {
+              maxLength = length;
+            }
+            length = 0;
           }
 
           if (processedOffset > BUFFER_SIZE - 10) {
@@ -80,12 +86,14 @@ public class LogFilesIndex {
           }
         }
       }
+
+      maxColumn.replace(file.getName(), maxLength);
     }
     logger.info("index building completed for " + file.getName());
     return offsetsList;
   }
 
-  public List<File> getLogFiles() throws FileNotFoundException {
+  private List<File> getLogFiles() throws FileNotFoundException {
     List<File> files;
 
     File logDirectory = new File(backendLogPath);
@@ -102,5 +110,9 @@ public class LogFilesIndex {
 
   public Map<String, List<Long>> getLinesIndex() {
     return linesIndex;
+  }
+
+  public HashMap<String, Long> getMaxColumn() {
+    return maxColumn;
   }
 }

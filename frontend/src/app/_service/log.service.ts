@@ -22,11 +22,13 @@ export class LogService {
     });
   }
 
-  public getFileContent(fileName: string, from: number, to: number): Observable<string[]> {
+  public getFileContent(fileName: string, from: number, to: number, lineStart: number, lineEnd: number): Observable<string[]> {
     let params: HttpParams = new HttpParams().append('from', from + '')
-      .append('to', to + '');
+      .append('to', to + '')
+      .append('lineStart', lineStart + '')
+      .append('lineEnd', lineEnd + '');
 
-    return this.http.get<string[]>(`/${environment.context}/${environment.api.log}/${environment.api.files}/${fileName}`, {
+    return this.http.get<any[]>(`/${environment.context}/${environment.api.log}/${environment.api.files}/${fileName}`, {
       params
     });
   }
