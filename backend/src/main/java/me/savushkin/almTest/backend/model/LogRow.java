@@ -6,4 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class LogRow {
+  private Integer index;
+  private String row;
 }

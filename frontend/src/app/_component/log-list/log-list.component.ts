@@ -9,20 +9,19 @@ import {LogStoreService} from '../../_service/log-store.service';
 })
 export class LogListComponent implements OnInit {
   public file = null;
-  public content: string[] = [];
+  public content = [];
 
   public from: number = 0;
   public to: number = 25;
   public top: number = 0;
-  public left: number = 25;
-  public onePageSize: number = 2;
-  public onePageHeight: number = 2;
+  public left: number = 0;
 
   @ViewChild('logList')
   private logList: ElementRef;
+  @ViewChild('logListContainer')
+  private logListContainer: ElementRef;
 
   private timeout;
-
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -31,11 +30,7 @@ export class LogListComponent implements OnInit {
 
 
   ngOnInit() {
-    this.onePageSize = Math.floor((this.logList.nativeElement.offsetHeight - 16) / 19) * 1.5;
-    this.onePageSize = 250;
-    this.onePageHeight = this.logList.nativeElement.offsetHeight - 16;
-    this.to = this.onePageSize;
-
+    let linePerPage = Math.ceil((this.logListContainer.nativeElement.offsetHeight - 16) / 19);
     if (this.route.snapshot.queryParams['top']) {
       // this.logList.nativeElement.scrollTop = this.route.snapshot.queryParams['top'];
     }
@@ -49,7 +44,7 @@ export class LogListComponent implements OnInit {
       queryParams => {
 
         this.from = parseInt(queryParams['from'] || 0);
-        this.to = parseInt(queryParams['to'] || this.onePageSize);
+        this.to = parseInt(queryParams['to'] || linePerPage);
         this.top = parseInt(queryParams['top'] || 0);
         this.left = parseInt(queryParams['left'] || 0);
 
@@ -57,7 +52,7 @@ export class LogListComponent implements OnInit {
           let file = JSON.parse(queryParams['file']);
 
           if (this.file && this.file.name === file.name) {
-            // this.logStoreService.loadFileContent(this.file.name, this.from, this.to);
+
           } else {
             this.file = file;
             this.logStoreService.loadFileContent(this.file.name, this.from, this.to);
@@ -69,7 +64,7 @@ export class LogListComponent implements OnInit {
     )
   }
 
-  public scrollList(event) {
+  public scrollList() {
     if (this.timeout) {
       clearTimeout(this.timeout);
     }

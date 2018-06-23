@@ -1,6 +1,7 @@
 package me.savushkin.almTest.backend.service;
 
 import me.savushkin.almTest.backend.model.LogFile;
+import me.savushkin.almTest.backend.model.LogRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -65,14 +66,14 @@ public class LogService {
     return getAllFiles(null);
   }
 
-  public List<String> getFileContent(String fileName, Integer from, Integer to) throws IOException {
+  public List<LogRow> getFileContent(String fileName, Integer from, Integer to) throws IOException {
     File file = new File(backendLogPath + "/" + fileName);
 
     if ( !file.exists() && !file.isFile() ) {
       throw new FileNotFoundException("File not found");
     }
 
-    List<String> rows = new ArrayList<>(to - from);
+    List<LogRow> rows = new ArrayList<>(to - from);
     byte[] buffer;
     ByteBuffer byteBuffer;
     List<Long> lineIndexList = logFilesIndex.getLinesIndex().get(fileName);
@@ -86,11 +87,11 @@ public class LogService {
           byteChannel.position(lineIndexList.get(line));
           byteChannel.read(byteBuffer);
           BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buffer)));
-          rows.add(br.readLine());
+          rows.add(new LogRow(line, br.readLine()));
         }
       }
     } else {
-      rows.add("The file in the indexing process");
+      rows.add(new LogRow(0, "The file in the indexing process"));
     }
 
     buffer = null;

@@ -30,6 +30,38 @@ body, html {
     background-color: #D25252;
   }
 
+  #filter-toggle {
+    transition: left 0.2s linear;
+
+    position: absolute;
+    bottom: 10px;
+    left: 60px;
+
+    display: block;
+    padding: 0.3em;
+    border-radius: 1em;
+
+    cursor: pointer;
+    user-select: none;
+    background-color: #D25252;
+  }
+
+  #search-toggle {
+    transition: left 0.2s linear;
+
+    position: absolute;
+    bottom: 10px;
+    left: 110px;
+
+    display: block;
+    padding: 0.3em;
+    border-radius: 1em;
+
+    cursor: pointer;
+    user-select: none;
+    background-color: #D25252;
+  }
+
   #menu {
     transition: width 0.2s linear;
 
@@ -63,6 +95,14 @@ body, html {
 
     #menu-toggle {
       left: 310px;
+    }
+
+    #filter-toggle {
+      left: 360px;
+    }
+
+    #search-toggle {
+      left: 410px;
     }
   }
 }

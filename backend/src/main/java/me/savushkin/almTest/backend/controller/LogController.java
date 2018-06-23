@@ -1,6 +1,7 @@
 package me.savushkin.almTest.backend.controller;
 
 import me.savushkin.almTest.backend.model.LogFile;
+import me.savushkin.almTest.backend.model.LogRow;
 import me.savushkin.almTest.backend.service.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class LogController {
                                           @RequestParam(name = "from") Integer from,
                                           @RequestParam(name = "to") Integer to) {
       try {
-        List<String> rows = logService.getFileContent(fileName, from, to);
+        List<LogRow> rows = logService.getFileContent(fileName, from, to);
         return new ResponseEntity<>(rows, HttpStatus.OK);
       } catch (Exception e) {
         logger.error(e.getMessage(), e);

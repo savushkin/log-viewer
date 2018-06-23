@@ -1,11 +1,8 @@
 <div class="log-title" [title]="file?.name">
-  {{file?.name}}
-  <ng-container *ngIf="file?.name && file?.size">
-    , {{file?.rows? file?.rows + ' rows': 'indexing'}}, {{file?.size|fileSize}}
-  </ng-container>
+  {{file?.name}}<ng-container *ngIf="file?.name && file?.size">, {{file?.rows? file?.rows + ' rows': 'indexing'}}, {{file?.size|fileSize}}</ng-container>
 </div>
-<div class="log-content-container">
-  <svg class="log-content" [attr.height]="16 + 19 * content.length" (scroll)="scrollList($event)" (resize)="resizeList($event)" #logList>
+<div class="log-content-container" #logListContainer>
+  <svg class="log-content" [attr.height]="16 + 19 * file?.rows" (scroll)="scrollList($event)" (resize)="resizeList($event)" #logList>
     <style>
       .log-content-item {
         font-family: 'Andale Mono', Consolas, 'Courier New', serif;
@@ -14,8 +11,8 @@
       }
     </style>
     <text class="log-content-item"
-          *ngFor="let row of content; let i = index"
-          [attr.y]="16 + i * 19">{{row}}</text>
+          *ngFor="let row of content;"
+          [attr.y]="row?.index? 16 + row?.index * 19: 16">{{row?.row}}</text>
   </svg>
 </div>
 <!--<ul class="log-content" (scroll)="scrollList($event)" (resize)="resizeList($event)" #logList>
