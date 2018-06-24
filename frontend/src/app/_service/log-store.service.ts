@@ -30,8 +30,6 @@ export class LogStoreService {
   }
 
   public loadFileContent(fileName: string, from: number, to: number, lineStart: number, lineEnd: number, callback?): void {
-    this.logContentStore.next([{row: 'Loading...', index: 0}]);
-
     if (this.subscriptions['requestFileContent']) {
       this.subscriptions['requestFileContent'].unsubscribe();
     }
@@ -44,7 +42,7 @@ export class LogStoreService {
         }
       },
       error => {
-        this.logContentStore.next(['Error:', error.message, error.error]);
+        this.logContentStore.next([]);
         this.errorService.handle(error);
       }
     )

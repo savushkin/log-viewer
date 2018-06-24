@@ -41,15 +41,18 @@ public class LogService {
       throw new FileNotFoundException("File not found or is not a directory");
     }
 
-    files = Arrays.asList(Objects.requireNonNull(logDirectory.listFiles((directory, fileName) -> {
-      boolean result = fileName.endsWith(".log") || fileName.endsWith(".out") || fileName.endsWith(".txt");
+    files = Arrays.asList(
+      Objects.requireNonNull(
+        logDirectory.listFiles((file) -> {
+          boolean result = file.canRead() &&
+            (file.getName().endsWith(".log") || file.getName().endsWith(".out") || file.getName().endsWith(".txt"));
 
-      if (result && fileNameFilter != null) {
-        result = fileName.contains(fileNameFilter);
-      }
+          if (result && fileNameFilter != null) {
+            result = file.getName().contains(fileNameFilter);
+          }
 
-      return result;
-    })));
+          return result;
+        })));
 
     files.sort((file1, file2) -> Long.compare(file2.lastModified(), file1.lastModified()));
     List<LogFile> logFiles = new ArrayList<>();
@@ -102,8 +105,8 @@ public class LogService {
   }
 
   private String getLineFromChannel(Integer line,
-                             SeekableByteChannel byteChannel,
-                             List<Long> lineIndexList) throws IOException {
+                                    SeekableByteChannel byteChannel,
+                                    List<Long> lineIndexList) throws IOException {
     long expectedSize = (line < lineIndexList.size() - 1 ? lineIndexList.get(line + 1) : byteChannel.size()) - lineIndexList.get(line);
     byte buffer[] = new byte[(int) expectedSize];
     ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);

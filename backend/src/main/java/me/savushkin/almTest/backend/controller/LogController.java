@@ -20,31 +20,31 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @Controller
 @RequestMapping("/api/log")
 public class LogController {
-    private final Logger logger = LoggerFactory.getLogger(LogController.class);
+  private final Logger logger = LoggerFactory.getLogger(LogController.class);
 
-    private final LogService logService;
+  private final LogService logService;
 
-    @Autowired
-    public LogController(LogService logService) {
-        this.logService = logService;
+  @Autowired
+  public LogController(LogService logService) {
+    this.logService = logService;
+  }
+
+  @RequestMapping(value = "/files", method = GET)
+  public ResponseEntity<?> getFiles(@RequestParam(name = "fileNameFilter", required = false) String fileNameFilter) {
+    try {
+      List<LogFile> files;
+      if (fileNameFilter != null) {
+        files = logService.getAllFiles(fileNameFilter);
+      } else {
+        files = logService.getAllFiles();
+      }
+
+      return new ResponseEntity<>(files, HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage(), e);
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
-    @RequestMapping(value = "/files", method = GET)
-    public ResponseEntity<?> getFiles(@RequestParam(name = "fileNameFilter", required = false) String fileNameFilter) {
-        try {
-            List<LogFile> files;
-            if (fileNameFilter != null) {
-                files = logService.getAllFiles(fileNameFilter);
-            } else {
-                files = logService.getAllFiles();
-            }
-
-            return new ResponseEntity<>(files, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+  }
 
   @RequestMapping(value = "/files/{fileName:.+}", method = GET)
   public ResponseEntity<?> getFileContent(@PathVariable(name = "fileName") String fileName,
@@ -52,12 +52,12 @@ public class LogController {
                                           @RequestParam(name = "to") Integer to,
                                           @RequestParam(name = "lineStart") Integer lineStart,
                                           @RequestParam(name = "lineEnd") Integer lineEnd) {
-      try {
-        List<LogRow> rows = logService.getFileContent(fileName, from, to, lineStart, lineEnd);
-        return new ResponseEntity<>(rows, HttpStatus.OK);
-      } catch (Exception e) {
-        logger.error(e.getMessage(), e);
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-      }
+    try {
+      List<LogRow> rows = logService.getFileContent(fileName, from, to, lineStart, lineEnd);
+      return new ResponseEntity<>(rows, HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage(), e);
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
+  }
 }

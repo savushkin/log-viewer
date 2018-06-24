@@ -102,8 +102,10 @@ public class LogFilesIndex {
       throw new FileNotFoundException("File not found");
     }
 
-    files = Arrays.asList(Objects.requireNonNull(logDirectory.listFiles((directory, fileName) ->
-      fileName.endsWith(".log") || fileName.endsWith(".out") || fileName.endsWith(".txt"))));
+    files = Arrays.asList(
+      Objects.requireNonNull(
+        logDirectory.listFiles((file) ->
+          file.canRead() && (file.getName().endsWith(".log") || file.getName().endsWith(".out") || file.getName().endsWith(".txt")))));
 
     return files;
   }

@@ -9,6 +9,7 @@ import {LogStoreService} from '../../_service/log-store.service';
 })
 export class LogListComponent implements OnInit, OnDestroy {
   private timeout = null;
+  private storage: Storage = sessionStorage;
 
   public name = null;
   public rows = null;
@@ -59,8 +60,8 @@ export class LogListComponent implements OnInit, OnDestroy {
 
     this.timeout = setTimeout(() => {
       if (this.name) {
-        localStorage.setItem(`${this.name}-top`, this.logListContainer.nativeElement.scrollTop);
-        localStorage.setItem(`${this.name}-left`, this.logListContainer.nativeElement.scrollLeft);
+        this.storage.setItem(`${this.name}-top`, this.logListContainer.nativeElement.scrollTop);
+        this.storage.setItem(`${this.name}-left`, this.logListContainer.nativeElement.scrollLeft);
       }
 
       this.router.navigate(['.'], {
@@ -71,7 +72,7 @@ export class LogListComponent implements OnInit, OnDestroy {
         },
         queryParamsHandling: 'merge'
       });
-    }, 100);
+    }, 75);
   }
 
   loadContent(name, rows, maxColumns, size, top, left) {
@@ -80,34 +81,34 @@ export class LogListComponent implements OnInit, OnDestroy {
     this.maxColumns = maxColumns;
     this.size = size;
 
-    this.top = parseInt(top || localStorage.getItem(`${this.name}-top`) || 0);
-    this.left = parseInt(left || localStorage.getItem(`${this.name}-left`) || 0);
+    this.top = parseInt(top || this.storage.getItem(`${this.name}-top`) || 0);
+    this.left = parseInt(left || this.storage.getItem(`${this.name}-left`) || 0);
 
     if (name) {
-      this.from = Math.floor(this.top / this.lineHeight) - this.linesPerPage * 2;
-      this.to = Math.floor(this.top / this.lineHeight) + this.linesPerPage * 3;
+      this.from = Math.floor(this.top / this.lineHeight) - this.linesPerPage * 4;
+      this.to = Math.floor(this.top / this.lineHeight) + this.linesPerPage * 5;
 
       if (this.name && this.rows && this.to > this.rows) {
         this.to = this.rows - 1;
       }
 
       if (this.from > this.to) {
-        this.from = this.to - this.linesPerPage * 5;
+        this.from = this.to - this.linesPerPage * 9;
       }
 
       if (this.from < 0) {
         this.from = 0;
       }
 
-      this.lineStart = Math.floor(this.left / this.symbolWidth) - this.symbolPerLine * 2;
-      this.lineEnd = Math.floor(this.left / this.symbolWidth) + this.symbolPerLine * 3;
+      this.lineStart = Math.floor(this.left / this.symbolWidth) - this.symbolPerLine * 4;
+      this.lineEnd = Math.floor(this.left / this.symbolWidth) + this.symbolPerLine * 5;
 
       if (this.name && this.maxColumns && this.lineEnd > this.maxColumns) {
         this.lineEnd = this.maxColumns - 1;
       }
 
       if (this.lineStart > this.lineEnd) {
-        this.lineStart = this.lineEnd - this.symbolPerLine * 5;
+        this.lineStart = this.lineEnd - this.symbolPerLine * 9;
       }
 
       if (this.lineStart < 0) {

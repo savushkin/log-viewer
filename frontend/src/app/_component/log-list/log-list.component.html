@@ -2,7 +2,7 @@
   <ng-container *ngIf="name; else selectFile">{{name}}, {{rows? rows + ' rows': 'indexing'}}, {{size|fileSize}}</ng-container>
   <ng-template #selectFile>Select file</ng-template>
 </div>
-<div class="log-content-container" #logListContainer (scroll)="scrollList($event)">
+<div class="log-content-container" #logListContainer (scroll)="scrollList()">
   <svg class="log-content"
        [attr.width]="16 + symbolWidth * (maxColumns? maxColumns: 0) + 16"
        [attr.height]="8 + lineHeight * (rows? rows: 0) + 32"
